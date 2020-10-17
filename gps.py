@@ -61,14 +61,53 @@ class GpsTelemtry():
     def __init__( self, time_elapse , ):
         self.interval_test = time_elapse
 
+    #----------------------------------------------------------------------------
     def get_telemetry(self):
+        # Documentación para get_telemetry
+        # Obtener mediante un llamado al sistema y a la API termux para obtener __string__ con la información de telemetria
+        # convertir __string__ a diccionario usando la libreria json de python
+        # almacenar durante el ciclo en self.gps_information
         try:
             tmp_raw_data_str = local_test_data # DEBUG: __string__ .
             #tmp_raw_data_str = os.popen('termux-location -p gps').read()
-            gps_information = json.loads(tmp_raw_data_str)
+
+            # se espera que tmp_raw_data_str esté vacía si no se puede obtener telemetria del GPS
+            # por tanto fallará la conversión a diccionario [Evitada]
+            self.gps_information = json.loads(tmp_raw_data_str)
         except:
+            # Error en __string__ tmp_raw_data_str  = "" ; [información al usuario]
             print("[Error GPS] : no se obtuvieron coordenadas GPS del dispositivo ")
         return None
+    #----------------------------------------------------------------------------
+
+
+    #----------------------------------------------------------------------------
+    def get_information(self , *display_options ):
+        # Documentación para get_information()
+        # Usar el diccionario generado por get_telemetry para mostrar información genérica o personalizada
+        # recibe como argumentos n __string__ para mostrar de forma personalizada
+        # si la invocación del método es vacial , se muestran  todos los disponibles en el diccionario
+
+        if len(display_options) == 0:
+            try:
+                print("Salida default (Completa)")
+                for keys in self.gps_information.keys():
+                    print("[OK]",keys)
+            except:
+                print("[Error Muestra] no hay datos gps en el diccionario")
+        else:
+            try:
+                for args_display_options in display_options:
+                    print("[Ok]",args_display_options , self.gps_information[args_display_options])
+            except :
+                print("[Error] datos no existentes en ",display_options);
+                print("Disponible ------> ")
+                for keys in self.gps_information.keys():
+                    print(keys)
+                return None
+
+
 
 data=GpsTelemtry(1)
 data.get_telemetry()
+data.get_information()
