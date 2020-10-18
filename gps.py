@@ -1,15 +1,27 @@
 """
-##############################################################################################
-                            PRUEBA SENCILLA DE TELEMETRIA GPS
+--------------------------------------------------------------------------------------------------------
+                                  PRUEBA TELEMETRIA GPS
                        Desarollado por Julian Guillermo Zapata Rugeles
+                                      GPL LICENSE V3
+
+Code Author = Julian Guillermo Zapata Rugeles
+year = 2020
+python version = Python 3.7.3 (default, Jul 25 2020, 13:03:44) GNU/LINUX
+
+
+Puedes tomar,editar,compartir este código y distribuirlo bajo licencia de software libre unicamente.
+https://www.gnu.org/licenses/gpl-3.0.txt (para más información)
+
 
 Objetivo :
     Usar la api termux disponible para android y python3 para obtener periodicamente
     datos del sensor GPS presente dispositivos de tipo android y generar un archivo
     que contenga telemetria.
+    -se procesará y almacenará en texto plano con formato tipo csv
+    -se puede almacenar en tipo json standar para post procesamiento
     se ejecutará una instancia de termux-api llamada termux-location que acepta las siguientes
     banderas.
-        -p provider gps [network, gps , ...]
+        -p provider gps [network, gps..]
         -r nonce , last ...
         termux-location -h para más información
     Se usará para obtener coordenadas GPS y trazar la trayectoria de un avión en periodos T
@@ -33,11 +45,11 @@ Ejemplo de respuesta de la API-TERMUX:
   "elapsedMs": 4,
   "provider": "gps"
 }
+-------------------------------------------------------------------------------------------------------- """
 
-###############################################################################################
-"""
+
+
 #------------------------------------ TEST DATA ---------------------------------------------#
-
 local_test_data="""{
   "latitude": 6.95912344,
   "longitude": -73.73235794,
@@ -58,9 +70,8 @@ import json
 class GpsTelemtry():
     gps_information = {};
 
-    def __init__( self, time_elapse , ):
-        self.interval_test = time_elapse
-
+    def __init__( self ):
+        pass
     #----------------------------------------------------------------------------
     def get_telemetry(self):
         # Documentación para get_telemetry
@@ -68,8 +79,10 @@ class GpsTelemtry():
         # convertir __string__ a diccionario usando la libreria json de python
         # almacenar durante el ciclo en self.gps_information
         try:
-            tmp_raw_data_str = local_test_data # DEBUG: __string__ .
-            #tmp_raw_data_str = os.popen('termux-location -p gps').read()
+            #------------------------------------------------------------------------------------
+            #tmp_raw_data_str = local_test_data # DEBUG: __string__ . DESCOMENTAR PARA USAR VALOR PRUEBA
+            tmp_raw_data_str = os.popen('termux-location -p gps').read() # COMENTAR PARA USO REAL
+            #------------------------------------------------------------------------------------
 
             # se espera que tmp_raw_data_str esté vacía si no se puede obtener telemetria del GPS
             # por tanto fallará la conversión a diccionario [Evitada]
@@ -77,8 +90,11 @@ class GpsTelemtry():
         except:
             # Error en __string__ tmp_raw_data_str  = "" ; [información al usuario]
             print("[Error GPS] : no se obtuvieron coordenadas GPS del dispositivo ")
-        return None
+            return False
+        return True
     #----------------------------------------------------------------------------
+
+
 
 
     #----------------------------------------------------------------------------
@@ -90,24 +106,58 @@ class GpsTelemtry():
 
         if len(display_options) == 0:
             try:
+                # mostrar todos los valores telemetria disponibles y almacenados en self.gps_information
+                # si display_options no tiene argumentos se muestra por default todos
                 print("Salida default (Completa)")
                 for keys in self.gps_information.keys():
-                    print("[OK]",keys)
+                    print("[OK]",keys,self.gps_information[keys])  # se muestra las claves y sus valores
             except:
                 print("[Error Muestra] no hay datos gps en el diccionario")
+                # si ocurrió algún error anteriormente en la obtención de datos este paso fallará pero será manejado.
         else:
             try:
                 for args_display_options in display_options:
+                    # de recibir agumentos en *display_options con args ** () tuple.
                     print("[Ok]",args_display_options , self.gps_information[args_display_options])
+                    #se imprime únicamente esos valores deseados.
             except :
-                print("[Error] datos no existentes en ",display_options);
-                print("Disponible ------> ")
+                print("[Error] datos no existentes en ",display_options); # si en *display_options no keys in self.gps_information
+                print("*******************   disponible *******************")
+                #se muestra las claves permitidas para el diccionario, para ser pasadas nuevamente
                 for keys in self.gps_information.keys():
                     print(keys)
                 return None
+    #----------------------------------------------------------------------------
 
 
+    def save_information(self,file_name="dataset.csv",*display_options):
+        # esta función guardará los datos de forma texto o según especificación.
+        # recibe dos argumentos, nombre de archivo y una lista *args de datos a exportar
 
-data=GpsTelemtry(1)
-data.get_telemetry()
-data.get_information()
+        try:
+            ostream_data=open(file_name,'a')
+        except Exception as e:
+            print("[Error] Al generar el archivo , verifique si posee permisos de escritura en disco.")
+        if len(display_options)==0:
+            print("[Default] almacenamiento")
+            print("[Guardar] default")
+            for keys in self.gps_information.keys():
+                ostream_data.write(keys)
+                ostream_data.write(":")
+                ostream_data.write(str(self.gps_information[keys]))
+                ostream_data.write(";")
+            ostream_data.write("\n")
+            ostream_data.close()
+        else:
+            print("[Guardar] personalizado")
+            for keys in display_options:
+                try:
+                    ostream_data.write(keys)
+                    ostream_data.write(":")
+                    ostream_data.write(str(self.gps_information[keys]))
+                    ostream_data.write(";")
+                except:
+                    pass
+            ostream_data.write("\n")
+            ostream_data.close()
+        return  None
