@@ -80,8 +80,13 @@ class GpsTelemtry():
         # almacenar durante el ciclo en self.gps_information
         try:
             #------------------------------------------------------------------------------------
+            # LINEAS PARA COMPROBACIÓN DE EJECUCIÓN CORRECTA DEL PROGRAMA
+            #
+
             #tmp_raw_data_str = local_test_data # DEBUG: __string__ . DESCOMENTAR PARA USAR VALOR PRUEBA
             tmp_raw_data_str = os.popen('termux-location -p gps').read() # COMENTAR PARA USO REAL
+
+            # FIN LINEAS DE PRUEBA Y DEPURACIÓN
             #------------------------------------------------------------------------------------
 
             # se espera que tmp_raw_data_str esté vacía si no se puede obtener telemetria del GPS
@@ -152,12 +157,15 @@ class GpsTelemtry():
             print("[Guardar] personalizado")
             for keys in display_options:
                 try:
+
                     ostream_data.write(keys)
                     ostream_data.write(":")
                     ostream_data.write(str(self.gps_information[keys]))
                     ostream_data.write(";")
                 except:
                     pass
+            lt = time.localtime() # return tuple with local time phone
+            ostream_data.write(str(lt[0:5])) # asociamos fecha al registro a escribir
             ostream_data.write("\n")
             ostream_data.close()
         return  None
