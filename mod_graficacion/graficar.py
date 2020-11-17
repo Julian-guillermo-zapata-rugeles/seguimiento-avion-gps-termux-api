@@ -32,8 +32,8 @@ relleno = False o True para relleno
 
 import os
 
-MODO="Stamen Toner"   # descomenta algunos de los dos paa genrar el mapa
-#MODO="Stamen Terrain"  # ... ...  ... ... ... ... .... ... ... ... ... ...
+#MODO="Stamen Toner"   # descomenta algunos de los dos paa genrar el mapa
+MODO="Stamen Terrain"  # ... ...  ... ... ... ... .... ... ... ... ... ...
 
 
 try:

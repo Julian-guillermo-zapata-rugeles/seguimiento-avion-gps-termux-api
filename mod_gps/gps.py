@@ -1,24 +1,25 @@
 """
 --------------------------------------------------------------------------------------------------------
-                                  PRUEBA TELEMETRIA GPS
+                                     TELEMETRIA GPS
                        Desarollado por Julian Guillermo Zapata Rugeles
                                       GPL LICENSE V3
 
-Code Author = Julian Guillermo Zapata Rugeles
-year = 2020
-python version = Python 3.7.3 (default, Jul 25 2020, 13:03:44) GNU/LINUX
+                         Author : Julian Guillermo Zapata Rugeles
+                                         2020
+                Python 3.7.3 (default, Jul 25 2020, 13:03:44) GNU/LINUX
+                 Android 10 - termux api -- termux shell -- LINUX/Generic
 
 
 Puedes tomar,editar,compartir este código y distribuirlo bajo licencia de software libre unicamente.
 https://www.gnu.org/licenses/gpl-3.0.txt (para más información)
 
 
-Objetivo :
+OBJETIVO  :
     Usar la api termux disponible para android y python3 para obtener periodicamente
     datos del sensor GPS presente dispositivos de tipo android y generar un archivo
     que contenga telemetria.
     -se procesará y almacenará en texto plano con formato tipo csv
-    -se puede almacenar en tipo json standar para post procesamiento
+    -se puede almacenar en tipo json estandar para post procesamiento
     se ejecutará una instancia de termux-api llamada termux-location que acepta las siguientes
     banderas.
         -p provider gps [network, gps..]
@@ -28,6 +29,27 @@ Objetivo :
     la telemetria se usará para trazar la ruta empleada.
     -- telemetria sobre viajes terrestres
     -- para obtener coordenadas en un momento x.
+    --graficar a travéz de follium un mapa basado en open street que contiene datos de telemetria
+
+INSTRUCCIONES DE USO:
+
+    1)
+        Este script funciona exclusivamente en un entorno termux en dispositivos Android
+        para su uso se debe instalar a travez de la tienda de aplicaciones
+        TERMUX
+        TERMUX - API
+
+    2)
+        Una vez suplido estos requisitos de debe instalar python3 en el entorno
+        esto se logra usando el siguiente comando : pkg install python3
+                                                    pkg install git
+
+    3)
+        Se realizará un git clone del repositorio ó lleve estos archivos al entorno termux
+        Ejecute iniciar prueba y listo.
+        Recuerde permitir el uso del sensor GPS para la prueba.
+        -- al obtener resultados puede graficarlos usando graficador.py
+
 
     # USO FUTURO :
         --Generar alertas cuando se encuentre a un radio determinado de coordenadas dadas.
@@ -50,6 +72,9 @@ Ejemplo de respuesta de la API-TERMUX:
 
 
 #------------------------------------ TEST DATA ---------------------------------------------#
+# para usar los datos de prueba dirijasé al método get_telemetry y active la linea
+# # DEBUG:  que contienen la información de local_test_data presente a continuación.
+
 local_test_data="""{
   "latitude": 6.95912344,
   "longitude": -73.73235794,
@@ -83,8 +108,10 @@ class GpsTelemtry():
             # LINEAS PARA COMPROBACIÓN DE EJECUCIÓN CORRECTA DEL PROGRAMA
             #
 
+            # XXXXXXXXXXXXXXXXXXXXXXX MODO DE PRUEBAS XXXXXXXXXXXXXXXXXXXXXXXXXX
             #tmp_raw_data_str = local_test_data # DEBUG: __string__ . DESCOMENTAR PARA USAR VALOR PRUEBA
             tmp_raw_data_str = os.popen('termux-location -p gps').read() # COMENTAR PARA USO REAL
+
 
             # FIN LINEAS DE PRUEBA Y DEPURACIÓN
             #------------------------------------------------------------------------------------
@@ -145,16 +172,18 @@ class GpsTelemtry():
             print("[Error] Al generar el archivo , verifique si posee permisos de escritura en disco.")
         if len(display_options)==0:
             print("[Default] almacenamiento")
-            print("[Guardar] default")
+            print("[Default] guardar")
             for keys in self.gps_information.keys():
                 ostream_data.write(keys)
                 ostream_data.write(":")
                 ostream_data.write(str(self.gps_information[keys]))
                 ostream_data.write(";")
+            lt = time.localtime() # return tuple with local time phone
+            ostream_data.write(str(lt[0:5])) # asociamos fecha al registro a escribir
             ostream_data.write("\n")
             ostream_data.close()
         else:
-            print("[Guardar] personalizado")
+            print("[Personalizado] guardar")
             for keys in display_options:
                 try:
 

@@ -1,0 +1,54 @@
+
+             JULIAN GUILLERMO ZAPATA RUGELES
+
+		 ██████╗██████╗███████╗    
+		██╔════╝██╔══████╔════╝    
+		██║  █████████╔███████╗    
+		██║   ████╔═══╝╚════██║    
+		╚██████╔██║    ███████║    
+		 ╚═════╝╚═╝    ╚══════╝    
+
+		  Instrucciones de uso 
+
+1) Al iniciar la prueba tenga en cuenta  lo siguiente
+
+- Requisitos funcionales :
+	* Dispositivo Android con sensor GPS 
+	* Termux  (instalar via playstore o apk)
+	* Termux-api (instalar via playstore o apk)
+	* python3.x.x (via termux pkg install python3)
+	* git (copiar este repositorio en termux :
+		via files o git clone
+
+2) Al iniciar el algoritmo solicita un tiempo para intervalo 
+   "tiempo de espera" que se empleará para la espera del gps
+   cada prueba correcta tendrá un intervalo de descanso dado
+   en segundos , por defecto es 0 segundos 
+   tenga en cuenta el tipo de prueba y la periocidad que necesita
+   un intervalo más grande significa más latencia entre pruebas
+   por lo que tendrá menos resultados a final del test.
+   
+   un numero bajo de descanso generará una menor latencia entre
+   las pruebas registradas. igualmente más intensidad en el uso
+   del sensor GPS  generará más gasto energético de su bateria 
+   considere el tipo de prueba y espesor de datos que requira.
+   
+   NOTA : Adicionalmente considere que las pruebas falliadas 
+          generarán un retardo mientras que el sensor GPS en su
+	  dispositivo recopila información de los satelites.
+ 
+3) Considere la visibilidad que poseé con el firmamento, pues:
+   para funcionar este algoritmo requiere una línea despejada 
+   con el sistema de posicionamiento global (GPS).su dispostivo
+   usará el sensor nativo para obtener el JSON con la telemetria.
+   un entorno cerrado impedirá la correcta recepción del gps 
+   los dias extremadamente cerrados podrían generar retrasos 
+   en la recepción. 
+
+4) Cuando considere , detenga la ejecución del algoritmo.
+   Los datos se guardará en un archivo persistente.
+   si desea más información sobre los posibles métodos de ejecución 
+   modifique el archivo principal o sus módulos.
+
+ 
+
