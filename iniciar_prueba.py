@@ -91,3 +91,4 @@ if __name__ == '__main__':
         elif iniciar=="2":
             os.system("clear")
             print(open("menu/m_instrucciones.txt").read())
+            continuar=str(input("Enter para continuar "))
